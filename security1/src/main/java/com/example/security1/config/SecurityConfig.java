@@ -3,10 +3,16 @@ package com.example.security1.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration // 메모리에 띄움
 public class SecurityConfig {
+	
+	@Bean // 해당 메서드의 리턴되는 오브젝트를 IoC로 등록해줌
+	public BCryptPasswordEncoder encodePwd() {
+		return new BCryptPasswordEncoder();	
+	}
 	
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -22,7 +28,7 @@ public class SecurityConfig {
 			.anyRequest().permitAll() //다른 주소는 권한 허용
 			.and()
 			.formLogin()
-			.loginPage("/login");
+			.loginPage("/loginForm");
 		/*
 			.loginProcessingUrl("loginProc")
 			.defaultSuccessUrl("/")
@@ -31,7 +37,7 @@ public class SecurityConfig {
 			.loginPage("/login")
 			.userInfoEndpoint()
 			.userService(null);
-			*/
+		*/
 		return http.build();
 		
 	}
