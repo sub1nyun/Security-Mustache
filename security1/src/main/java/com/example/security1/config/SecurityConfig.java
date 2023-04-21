@@ -18,7 +18,7 @@ public class SecurityConfig {
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf().disable();
 		http.authorizeRequests()
-			.antMatchers("/user/**").authenticated() //user~ 로 들어오면 인증이 필요함
+			.antMatchers("/user/**").authenticated() //user~ 로 들어오면 인증이 필요함, 인증만 되면 들어갈 수 있는 주소
 			// .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN') or
 			// hasRole('ROLE_USER')")
 			// .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN') and
@@ -28,9 +28,12 @@ public class SecurityConfig {
 			.anyRequest().permitAll() //다른 주소는 권한 허용
 			.and()
 			.formLogin()
-			.loginPage("/loginForm");
+			.loginPage("/loginForm")
+			//.usernameParameter("username2") 파라메터 이름을 바꾸고 싶다면 사용
+			.loginProcessingUrl("/loginProc") // /loginProc 주소가 호출이 되면 시큐리티가 낚아채서 대신 로그인을 진행
+			.defaultSuccessUrl("/");
 		/*
-			.loginProcessingUrl("loginProc")
+			
 			.defaultSuccessUrl("/")
 			.and()
 			.oauth2Login()
