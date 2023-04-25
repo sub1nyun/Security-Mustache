@@ -43,4 +43,6 @@
     <fullyQualifiedTypeName name="org.springframework.security.access.annotation.Secured"/>
     <fullyQualifiedTypeName name="org.springframework.security.access.prepost.PreAuthorize"/>
     <fullyQualifiedTypeName name="org.springframework.security.access.prepost.PostAuthorize"/>
+    <fullyQualifiedTypeName name="org.springframework.web.servlet.mvc.Controller"/>
+    <fullyQualifiedTypeName name="org.springframework.web.servlet.ModelAndView"/>
 </qualifiedTypeNameHistroy>
