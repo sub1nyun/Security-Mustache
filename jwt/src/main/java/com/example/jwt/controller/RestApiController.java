@@ -1,8 +1,10 @@
 package com.example.jwt.controller;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+//@CrossOrigin // 인증이 필요한 요청은 해결되지 않음
 @RestController
 public class RestApiController {
 
