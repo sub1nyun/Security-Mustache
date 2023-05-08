@@ -2,6 +2,7 @@ package com.example.jwt.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -10,6 +11,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.web.filter.CorsFilter;
 
+import com.example.jwt.config.jwt.JwtAuthenticationFilter;
 import com.example.jwt.filter.MyFilter1;
 
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,7 @@ public class SecurityConfig {
 		.addFilter(corsFilter) // @CrossOrigin(인증x), 시큐리티 필터에 등록 인증(O)
 		.formLogin().disable() // jwt 서버 -> id pw 폼으로 생각 안 함 (form 로그인 사용 안 함)
 		.httpBasic().disable()
+		//.addFilter(new JwtAuthenticationFilter(AuthenticationManager)) // AuthenticationManger를 반드시 전달해줘야함 
 		.authorizeRequests()
 		.antMatchers("/api/v1/user/**")
 		.access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
