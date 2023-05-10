@@ -22,7 +22,7 @@ public class PrincipalDetail implements UserDetails{
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 		user.getRoleList().forEach(r -> {
-			authorities.add(()->r);
+			authorities.add(()->r); // 자
 		});
 		return authorities;
 	}
