@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <aop-reference-model>
+<aop-project name="blog"/>
 <aop-project name="security1"/>
 <aop-project name="jwt"/>
 </aop-reference-model>
