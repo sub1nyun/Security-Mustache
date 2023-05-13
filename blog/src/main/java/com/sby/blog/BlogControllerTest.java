@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.sby.blog.model.Board;
 import com.sby.blog.model.User;
+import com.sby.blog.repository.BoardRepository;
 import com.sby.blog.repository.UserRepository;
 
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -25,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class BlogControllerTest {
 	
 	private UserRepository userRepository;
+	private BoardRepository boardRepository;
 
 	
 	@GetMapping("/dummy/users")
@@ -105,7 +109,11 @@ public class BlogControllerTest {
 		return "삭제됨";
 	}
 	
-	
+	// 글 목록 페이징
+	public Page<Board> listBoard(Pageable pageable) {
+		return boardRepository.findAll(pageable);
+		
+	}
 	
 	
 }

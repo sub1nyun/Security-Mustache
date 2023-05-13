@@ -19,6 +19,7 @@ public class SeccurityConfig {
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
+		.csrf().disable()
 		.authorizeHttpRequests()
 			.antMatchers("/auth/**")
 			.permitAll()
@@ -26,7 +27,9 @@ public class SeccurityConfig {
 			.authenticated()
 		.and()
 			.formLogin()
-			.loginPage("/auth/lginForm");
+			.loginPage("/auth/lginForm")
+			.loginProcessingUrl("/auth/loginProc") // 시큐리티가 해당 주소의 로그인 욫청을 가로채서 -> 대신 로그인
+			.defaultSuccessUrl("/");  
 		return http.build();
 	}
 }
