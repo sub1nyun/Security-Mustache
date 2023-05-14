@@ -65,7 +65,7 @@ public class BlogControllerTest {
 		return users;
 	}
 	
-	@Transactional
+	@Transactional // 함수 종료 시에 자동 commit 
 	@PutMapping("dummy/user/{id}")
 	// email, password 수정
 	public User updateUser(@PathVariable int id, @RequestBody User requestUser) {
