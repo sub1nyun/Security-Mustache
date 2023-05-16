@@ -1,0 +1,76 @@
+###### junit 테스트 작성 (BDD 패턴)
+
+1. Unit - 단위 테스트
+2. Integration - 통합 테스트
+
+# - JUnit 탭에서 Ctrl + F11로 테스트 스타트
+# - MockMvc란 - 실제 서버에 배포하지 않고 테스트를 위한 요청을 제공해주는 라이브러리 ( 주소를 호출하여 테스트해줌)
+# - 테스트를 위해서는 @Test 어노테이션을 기재
+
+/**
+ * MockMvc 설명
+ * perform() 수행
+ * andDo() 이후 할 행동
+ * andExpect() 기대값
+ * 기대값에 content() 사용
+ */
+
+# BDDMockito 패턴 - given, when, then 일반 Mockito를 확장해서 메서드를 지원해줌
+ # given (테스트를 하기 위한 준비)
+ ex) save(저장)을 위해서 필요한 JSON 객체 준비
+	Book book = new Book(null, "스프링 따라하기", "코스"); - stub -> save()를 가짜로 하기 때문에 null이 반환됨(서비스, 레파지토리가 메모리에 없음) -> 데이터를 미리 만들어두는것(가정)
+	String content = new ObjectMapper().writeValueAsString(book);
+            -	결과 미리 만들어두기 
+	when(bookService.save()).thenReturn(new Book(1L, "스프링 따라하기", "코스"));
+ # when (테스트 실행)
+	ResultActions resultActions =mockMvc.perform(MockMvcRequestBuilders.post("/book") - perform의 리턴타입이 ResultActions 
+		// 던지는 데이터 타입
+		.contentType(MediaType.APPLICATION_JSON)
+		// 실제로 던질 데이터
+		.content(content)
+		// 응답
+		.accept(MediaType.APPLICATION_JSON));
+
+ # then (검증)
+	// then (검증) 위에서 나온 결과 확인하기 isCreated() -> 201
+	resultActions.andExpect(MockMvcResultMatchers.status().isCreated())
+	.andExpect(MockMvcResultMatchers.jsonPath("$.title").value("스프링 따라하기"))
+	// $ 전체 결과 .변수가 value("~") 가 맞는지 검증
+	.andDo(MockMvcResultHandlers.print()); // 콘솔에 결과를 보여줌
+
+## 단위(Unit) 테스트
+ 1. 컨트롤러
+ ## 테스트를 위해 알아야할 어노테이션
+ @WebMvcTest - 컨트롤러(Filter, advice등)을 IoC 메모리에 띄워줌 (@AutoConfigureMockMvc 포함 되어있음)
+ @ExtendWith(SpringExtension.class) -> 5부터는 위의 어노테이션에 포함되어 있음(테스트 환경을 스프링환경으로 or MockitoExtension.class 모스키토환경으로)
+ @MockBean -> (가짜) IoC환경에 Bean 등록 됨 -> 없으면 해당 컨트롤러에서 불러오는 서비스가 널임
+ 
+
+  2. 서비스
+ ## 테스트를 위해 알아야할 어노테이션 
+ - 서비스 안에서 필요한 것 -> DB 및 Repository만 필요함
+ @ExtendWith(MockitoExtension.class)  모키토 환경으로 구성하기
+ @InjectMocks -> service 객체가 생성될때 @Mock으로 등록된 것들을 주입 받음
+ @Mock IoC가 아닌 mock 환경에 메모리 띄움
+ex) ~~Service에서 ARepository가 필요함 -> Service에 @InjectMocks 어노테이션을 달아서 해당 Service가 생성될 때 필요한 ARepository를 Mock 환경에 주입
+-> 주입하지 않으면 null과 같음 -> IoC 환경이 아님
+
+  3. 레파지토리 - 테스트 파일은 클래스로
+ ## 테스트를 위해 알아야할 어노테이션
+ - DB 관련 된 Bean이 등록되야함
+ @DataJpaTest -> JPA관련만 메모리에 띄워줌 -> Spring 환경을 가지고 있음(@ExtendWith(SpringExtension.class)
+ @AutoConfigureTestDatabase(replace = Replace.ANY) ANY -> 가짜 DB로 테스트 NONE -> 실제 DB로 테스트
+ @Transactional -> Rollback을 위해서
+ 스프링 환경이기 때문에 필요한 Repository를 생성해서 @Autowired로 주입 가능함
+ 
+
+
+## 통합(Integration) 테스트 -> 쉬움
+ 전체 IoC를 올려서 하는 테스트
+ ## 테스트를 위해 알아야할 어노테이션
+ @SpringBootTest(webEnvironment = WebEnvironment.MOCK) -> 실제 톰켓이 아닌 mocking한 서블릿이 동작함 , 필요한 class만 올릴 수도 있음
+ @AutoConfigureMockMvc -> MockMvcc를 Bean으로 등록
+ @Transactional 
+ 실제 스프링 환경이기 때문에 @Autowired가 가능함 
+
+
