@@ -1,16 +1,23 @@
 package com.sby.blog.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.sby.blog.config.auth.PrincipalDetailsService;
+
 @Configuration // 스프링의 구성 요소로 인식
 @EnableWebSecurity // 스프링 시큐리티 보안 활성화 -> 스프링 필터체인에 등록
 public class SecurityConfig {
-	
+	/*
+	@Autowired
+	private PrincipalDetailsService principalDetailsService;
+	*/
 	@Bean
 	public BCryptPasswordEncoder encodePwd() {
 		return new BCryptPasswordEncoder();	
@@ -33,7 +40,17 @@ public class SecurityConfig {
 			.loginProcessingUrl("/loginProc") // /loginProc 주소가 호출이 되면 시큐리티가 낚아채서 대신 로그인을 진행
 			.defaultSuccessUrl("/");
 		return http.build();
-		
 	}
+	
+	// 시큐리티에서 로그인 처리를 위해 UserDetailsService 찾는 부분 -> DaoAuthenticationProvider
+	/*
+	@Bean
+	public DaoAuthenticationProvider authenticationProvider() {
+		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+		authProvider.setUserDetailsService(principalDetailsService);
+		authProvider.setPasswordEncoder(encodePwd());
+		return authProvider;
+	}
+	*/
 
 }
