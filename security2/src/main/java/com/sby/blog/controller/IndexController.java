@@ -1,6 +1,9 @@
 package com.sby.blog.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,6 +64,21 @@ public class IndexController {
 		userRepository.save(user);
 		return "redirect:/loginForm"; //회원가입이 됐다면 -> loginForm 재호출 
 	}
+	
+	// 1. @EnableGlobalMethodSecurity(securedEnabled = true 활성화 전에는 권한이 없어서 어디서든 접근이 가능했음
+	@Secured("ROLE_ADMIN") // 권한이 없다면 info에 접근이 불가능해짐 -> 간단하게 권한 부여하기
+	@GetMapping("/info")
+	public @ResponseBody String info() {
+		return "개인정보";
+	}
+	
+	// 해당 메서드가 작동하기 직전에 작동
+	@PreAuthorize("hasRole('ROLE_MANAGER')")
+	@GetMapping("/data")
+	public @ResponseBody String data() {
+		return "데이터정보";
+	}
+	
 	
 	/*
 	@GetMapping("/joinProc")

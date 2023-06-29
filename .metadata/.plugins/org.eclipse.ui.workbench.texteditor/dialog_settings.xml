@@ -8,6 +8,7 @@
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
+			<item value="Dao"/>
 			<item value="tag"/>
 			<item value="security"/>
 			<item value="array"/>
