@@ -2,6 +2,7 @@ package com.sby.blog.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -74,6 +75,7 @@ public class IndexController {
 	
 	// 해당 메서드가 작동하기 직전에 작동
 	@PreAuthorize("hasRole('ROLE_MANAGER')")
+	//@PostAuthorize // 메서드가 끝난 후 작동
 	@GetMapping("/data")
 	public @ResponseBody String data() {
 		return "데이터정보";
