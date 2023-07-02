@@ -3,5 +3,6 @@
 <aop-project name="blog"/>
 <aop-project name="security1"/>
 <aop-project name="security2"/>
+<aop-project name="jwt-second"/>
 <aop-project name="jwt"/>
 </aop-reference-model>

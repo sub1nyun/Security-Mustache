@@ -2,14 +2,19 @@ package com.sby.second.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.web.filter.CorsFilter;
 
+import com.sby.second.config.jwt.JwtAuthenticationFilter;
 import com.sby.second.filter.MyFilter1;
+import com.sby.second.filter.MyFilter3;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +25,11 @@ public class SecurityConfig {
 	
 	private final CorsFilter corsFilter;
 	
+	@Bean
+	public BCryptPasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
 	// 컨트롤러에서 사용하는 @CrossOrigin같은 경우는 시큐리티와 같이 인증이 필요한 요청은 거부 -> 인증이 필요하지 않는 부분만 사용하기
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -28,6 +38,9 @@ public class SecurityConfig {
 		// ▼ BasicAuthenticationFilter가 동작하기전에 해당 MyFilter1이 동작한다는 의미
 		// 굳이 시큐리티 필터에는 걸어서 사용하지 않음
 		//http.addFilterBefore(new MyFilter1(), BasicAuthenticationFilter.class);
+		
+		// 시뮤리티 필터가 동작전에 사용시키기
+		//http.addFilterBefore(new MyFilter3(), SecurityContextPersistenceFilter.class);
 		http.csrf().disable();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션 미사용
 		.and()
@@ -37,7 +50,14 @@ public class SecurityConfig {
 		.formLogin().disable() // jwt 서버 -> id pw 폼으로 생각 안 함 (form 로그인 사용 안 함)
 		// 
 		.httpBasic().disable()
+		// AuthenticationManger를 반드시 전달해줘야함 -> 로그인을 진행하는 필터기 때문에
+		//.addFilter(new JwtAuthenticationFilter())
 		.authorizeRequests()
+		/*
+		 * .antMatchers("/api/v1/user/**").hasAnyRole("USER", "MANAGER", "ADMIN")
+			.antMatchers("/api/v1/manager/**").hasAnyRole("MANAGER", "ADMIN")
+			.antMatchers("/api/v1/admin/**").hasRole("ADMIN")
+		 */
 		.antMatchers("/api/v1/user/**")
 		.access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
 		.antMatchers("/api/v1/manager/**")
@@ -45,7 +65,9 @@ public class SecurityConfig {
 		.antMatchers("/api/v1/admin/**")
 		.access("hasRole('ROLE_ADMIN')")
 		.anyRequest().permitAll();
+
 		return http.build();	
 	}
-	
+
+
 }
